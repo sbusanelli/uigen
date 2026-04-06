@@ -4,7 +4,9 @@ import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "development-secret-key"
+  process.env.JWT_SECRET || (() => {
+    throw new Error("JWT_SECRET environment variable is required in production");
+  })()
 );
 
 const COOKIE_NAME = "auth-token";
