@@ -42,11 +42,10 @@ export async function POST(req: Request) {
 
     const model = getLanguageModel();
 
-    // Use the new AI SDK v6 streamText
+    // Use the new AI SDK v6 streamText with full tool integration
     const result = await streamText({
       model,
       messages: messagesWithSystem,
-      maxTokens: 10_000,
       tools: {
         str_replace_editor: buildStrReplaceTool(fileSystem),
         file_manager: buildFileManagerTool(fileSystem),
@@ -84,7 +83,7 @@ export async function POST(req: Request) {
       },
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error("Chat API error:", error);
     

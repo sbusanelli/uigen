@@ -1,4 +1,5 @@
-import { test, expect, afterEach } from "vitest";
+import React from "react";
+import { test, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import { MarkdownRenderer } from "../MarkdownRenderer";
 

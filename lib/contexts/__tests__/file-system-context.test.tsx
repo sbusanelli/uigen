@@ -1,3 +1,4 @@
+import React from "react";
 import { test, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act, cleanup } from "@testing-library/react";
 import { FileSystemProvider, useFileSystem } from "../file-system-context";

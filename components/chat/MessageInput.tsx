@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, KeyboardEvent } from "react";
+import React, { ChangeEvent, FormEvent, KeyboardEvent } from "react";
 import { Send } from "lucide-react";
 
 interface MessageInputProps {

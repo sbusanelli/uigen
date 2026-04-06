@@ -3,10 +3,10 @@ import { z } from "zod";
 import { VirtualFileSystem } from "../file-system";
 
 export function buildFileManagerTool(fileSystem: VirtualFileSystem) {
-  return {
+  return tool({
     description:
       'Rename or delete files or folders in the file system. Rename can be used to "move" a file. Rename will recursively create folders as required.',
-    parameters: z.object({
+    inputSchema: z.object({
       command: z
         .enum(["rename", "delete"])
         .describe("The operation to perform"),
@@ -19,35 +19,44 @@ export function buildFileManagerTool(fileSystem: VirtualFileSystem) {
         .describe("The new path. Only provide when renaming or moving a file."),
     }),
     execute: async ({ command, path, new_path }) => {
-      if (command === "rename") {
-        if (!new_path) {
-          return {
-            success: false,
-            error: "new_path is required for rename command",
-          };
-        }
-        const success = fileSystem.rename(path, new_path);
-        if (success) {
-          return {
-            success: true,
-            message: `Successfully renamed ${path} to ${new_path}`,
-          };
-        } else {
-          return {
-            success: false,
-            error: `Failed to rename ${path} to ${new_path}`,
-          };
-        }
-      } else if (command === "delete") {
-        const success = fileSystem.deleteFile(path);
-        if (success) {
-          return { success: true, message: `Successfully deleted ${path}` };
-        } else {
-          return { success: false, error: `Failed to delete ${path}` };
-        }
+      
+      switch (command) {
+        case "rename":
+          if (!new_path) {
+            return "Error: new_path is required for rename";
+          }
+          try {
+            // Get the current file content
+            const currentFile = fileSystem.viewFile(path);
+            if (currentFile === null) {
+              return `Error: File not found: ${path}`;
+            }
+            
+            // Create the new file with the same content
+            fileSystem.createFile(new_path, currentFile);
+            
+            // Delete the old file
+            fileSystem.deleteFile(path);
+            
+            return "File renamed successfully";
+          } catch (error) {
+            return `Error: Failed to rename ${path}`;
+          }
+
+        case "delete":
+          try {
+            const success = fileSystem.deleteFile(path);
+            if (success) {
+              return "File deleted successfully";
+            } else {
+              return `Error: Failed to delete ${path}`;
+            }
+          } catch (error) {
+            return `Error: Failed to delete ${path}`;
+          }
       }
 
-      return { success: false, error: "Invalid command" };
+      return "Error: Invalid command";
     },
   });
 }

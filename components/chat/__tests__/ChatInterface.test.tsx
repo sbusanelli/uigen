@@ -1,3 +1,4 @@
+import React from "react";
 import { test, expect, vi, afterEach, beforeEach } from "vitest";
 import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -22,7 +23,7 @@ vi.mock("@/components/ui/scroll-area", () => ({
 vi.mock("../MessageList", () => ({
   MessageList: ({ messages, isLoading }: any) => (
     <div data-testid="message-list">
-      {messages.length} messages, loading: {isLoading.toString()}
+      {messages.length} messages, loading: {isLoading ? "true" : "false"}
     </div>
   ),
 }));
@@ -69,8 +70,8 @@ test("renders chat interface with message list and input", () => {
 
 test("passes correct props to MessageList", () => {
   const messages = [
-    { id: "1", role: "user", content: "Hello" },
-    { id: "2", role: "assistant", content: "Hi there!" },
+    { id: "1", role: "user", parts: [{ type: "text", text: "Hello" }] },
+    { id: "2", role: "assistant", parts: [{ type: "text", text: "Hi there!" }] },
   ];
   
   (useChat as any).mockReturnValue({

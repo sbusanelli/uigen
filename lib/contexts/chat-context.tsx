@@ -87,8 +87,16 @@ export function ChatProvider({
 
       setMessages([
         ...messages,
-        { role: "user", content: input },
-        { role: "assistant", content: assistantMessage },
+        {
+          id: `msg-${Date.now()}`,
+          role: "user",
+          parts: [{ type: "text", text: input }]
+        } as UIMessage,
+        {
+          id: `msg-${Date.now() + 1}`,
+          role: "assistant", 
+          parts: [{ type: "text", text: assistantMessage }]
+        } as UIMessage,
       ]);
 
       setInput("");

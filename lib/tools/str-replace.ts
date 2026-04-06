@@ -1,3 +1,4 @@
+import { tool } from "ai";
 import { z } from "zod";
 import { VirtualFileSystem } from "@/lib/file-system";
 
@@ -12,37 +13,42 @@ const TextEditorParameters = z.object({
 });
 
 export const buildStrReplaceTool = (fileSystem: VirtualFileSystem) => {
-  return {
+  return tool({
     description: "Text editor tool for viewing, creating, and modifying files",
-    parameters: TextEditorParameters,
-    execute: async ({
-      command,
-      path,
-      file_text,
-      insert_line,
-      new_str,
-      old_str,
-      view_range,
-    }: z.infer<typeof TextEditorParameters>) => {
+    inputSchema: TextEditorParameters,
+    execute: async ({ command, path, file_text, insert_line, new_str, old_str, view_range }) => {
+      
       switch (command) {
         case "view":
           return fileSystem.viewFile(
             path,
-            view_range as [number, number] | undefined
-          );
+            view_range ? [view_range[0], view_range[1]] : undefined
+          ) || "File not found";
 
         case "create":
-          return fileSystem.createFileWithParents(path, file_text || "");
+          if (!file_text) {
+            return "Error: file_text is required for create command";
+          }
+          return fileSystem.createFile(path, file_text) || "File created successfully";
 
         case "str_replace":
-          return fileSystem.replaceInFile(path, old_str || "", new_str || "");
+          if (!old_str || !new_str) {
+            return "Error: old_str and new_str are required for str_replace";
+          }
+          return fileSystem.replaceInFile(path, old_str, new_str) || "Text replaced successfully";
 
         case "insert":
-          return fileSystem.insertInFile(path, insert_line || 0, new_str || "");
+          if (insert_line === undefined || !new_str) {
+            return "Error: insert_line and new_str are required for insert";
+          }
+          return fileSystem.insertInFile(path, insert_line, new_str) || "Text inserted successfully";
 
         case "undo_edit":
-          return `Error: undo_edit command is not supported in this version. Use str_replace to revert changes.`;
+          return "Error: undo_edit not implemented yet";
+
+        default:
+          return `Error: Unknown command: ${command}`;
       }
     },
-  };
+  });
 };

@@ -1,7 +1,8 @@
+import React from "react";
 import { test, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import { MessageList } from "../MessageList";
-import type { Message } from "ai";
+import type { UIMessage } from "ai";
 
 // Mock the MarkdownRenderer component
 vi.mock("../MarkdownRenderer", () => ({
@@ -24,11 +25,11 @@ test("MessageList shows empty state when no messages", () => {
 });
 
 test("MessageList renders user messages", () => {
-  const messages: Message[] = [
+  const messages: UIMessage[] = [
     {
       id: "1",
       role: "user",
-      content: "Create a button component",
+      parts: [{ type: "text", text: "Create a button component" }],
     },
   ];
 
@@ -38,11 +39,11 @@ test("MessageList renders user messages", () => {
 });
 
 test("MessageList renders assistant messages", () => {
-  const messages: Message[] = [
+  const messages: UIMessage[] = [
     {
       id: "1",
       role: "assistant",
-      content: "I'll help you create a button component.",
+      parts: [{ type: "text", text: "I'll create a button component for you." }],
     },
   ];
 
@@ -54,7 +55,7 @@ test("MessageList renders assistant messages", () => {
 });
 
 test("MessageList renders messages with parts", () => {
-  const messages: Message[] = [
+  const messages: UIMessage[] = [
     {
       id: "1",
       role: "assistant",
@@ -82,7 +83,7 @@ test("MessageList renders messages with parts", () => {
 });
 
 test("MessageList shows content for assistant message with content", () => {
-  const messages: Message[] = [
+  const messages: UIMessage[] = [
     {
       id: "1",
       role: "assistant",
@@ -98,7 +99,7 @@ test("MessageList shows content for assistant message with content", () => {
 });
 
 test("MessageList shows loading state for last assistant message without content", () => {
-  const messages: Message[] = [
+  const messages: UIMessage[] = [
     {
       id: "1",
       role: "assistant",
@@ -112,7 +113,7 @@ test("MessageList shows loading state for last assistant message without content
 });
 
 test("MessageList doesn't show loading state for non-last messages", () => {
-  const messages: Message[] = [
+  const messages: UIMessage[] = [
     {
       id: "1",
       role: "assistant",
@@ -132,7 +133,7 @@ test("MessageList doesn't show loading state for non-last messages", () => {
 });
 
 test("MessageList renders reasoning parts", () => {
-  const messages: Message[] = [
+  const messages: UIMessage[] = [
     {
       id: "1",
       role: "assistant",
@@ -157,7 +158,7 @@ test("MessageList renders reasoning parts", () => {
 });
 
 test("MessageList renders multiple messages in correct order", () => {
-  const messages: Message[] = [
+  const messages: UIMessage[] = [
     {
       id: "1",
       role: "user",
@@ -200,7 +201,7 @@ test("MessageList renders multiple messages in correct order", () => {
 });
 
 test("MessageList handles step-start parts", () => {
-  const messages: Message[] = [
+  const messages: UIMessage[] = [
     {
       id: "1",
       role: "assistant",
@@ -223,7 +224,7 @@ test("MessageList handles step-start parts", () => {
 });
 
 test("MessageList applies correct styling for user vs assistant messages", () => {
-  const messages: Message[] = [
+  const messages: UIMessage[] = [
     {
       id: "1",
       role: "user",
@@ -238,22 +239,22 @@ test("MessageList applies correct styling for user vs assistant messages", () =>
 
   render(<MessageList messages={messages} />);
 
-  const userMessage = screen.getByText("User message").closest(".rounded-xl");
-  const assistantMessage = screen
+  const userUIMessage = screen.getByText("User message").closest(".rounded-xl");
+  const assistantUIMessage = screen
     .getByText("Assistant message")
     .closest(".rounded-xl");
 
   // User messages should have blue background
-  expect(userMessage?.className).toContain("bg-blue-600");
-  expect(userMessage?.className).toContain("text-white");
+  expect(userUIMessage?.className).toContain("bg-blue-600");
+  expect(userUIMessage?.className).toContain("text-white");
 
   // Assistant messages should have white background
-  expect(assistantMessage?.className).toContain("bg-white");
-  expect(assistantMessage?.className).toContain("text-neutral-900");
+  expect(assistantUIMessage?.className).toContain("bg-white");
+  expect(assistantUIMessage?.className).toContain("text-neutral-900");
 });
 
 test("MessageList handles empty content with parts", () => {
-  const messages: Message[] = [
+  const messages: UIMessage[] = [
     {
       id: "1",
       role: "assistant",
@@ -268,7 +269,7 @@ test("MessageList handles empty content with parts", () => {
 });
 
 test("MessageList shows loading for assistant message with empty parts", () => {
-  const messages: Message[] = [
+  const messages: UIMessage[] = [
     {
       id: "1",
       role: "assistant",

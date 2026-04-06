@@ -3,7 +3,6 @@ import { RateLimiterMemory } from "rate-limiter-flexible";
 
 // Rate limiter for API routes
 const rateLimiter = new RateLimiterMemory({
-  keyGenerator: (req: NextRequest) => req.ip || "anonymous",
   points: 10, // Number of requests
   duration: 60, // Per 60 seconds
 });
@@ -20,7 +19,10 @@ const securityHeaders = {
 export async function securityMiddleware(req: NextRequest) {
   // Apply rate limiting
   try {
-    await rateLimiter.consume(req.ip || "anonymous");
+    const clientIP = req.headers.get('x-forwarded-for') || 
+                     req.headers.get('x-real-ip') || 
+                     "anonymous";
+    await rateLimiter.consume(clientIP);
   } catch (rejRes: any) {
     return NextResponse.json(
       { error: "Too many requests" },
