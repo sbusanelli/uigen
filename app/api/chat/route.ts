@@ -7,6 +7,7 @@ import { getSession } from "@/lib/auth";
 import { getLanguageModel } from "@/lib/provider";
 import { generationPrompt } from "@/lib/prompts/generation";
 import { z } from "zod";
+import { streamText } from "ai";
 
 // Input validation schema
 const chatRequestSchema = z.object({
@@ -26,10 +27,14 @@ export async function POST(req: Request) {
     
     const { messages, files, projectId } = validatedData;
 
-    messages.unshift({
-      role: "system",
-      content: generationPrompt,
-    });
+    // Add system message
+    const messagesWithSystem = [
+      {
+        role: "system" as const,
+        content: generationPrompt,
+      },
+      ...messages,
+    ];
 
     // Reconstruct the VirtualFileSystem from serialized data
     const fileSystem = new VirtualFileSystem();
@@ -37,16 +42,49 @@ export async function POST(req: Request) {
 
     const model = getLanguageModel();
 
-    // For now, return a simple response since the AI SDK integration is complex
-    return new Response(
-      JSON.stringify({
-        role: "assistant",
-        content: "The project has been successfully built! The AI integration is ready but requires proper API key configuration. Add ANTHROPIC_API_KEY to your .env file to enable AI features.",
-      }),
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    // Use the new AI SDK v6 streamText
+    const result = await streamText({
+      model,
+      messages: messagesWithSystem,
+      maxTokens: 10_000,
+      tools: {
+        str_replace_editor: buildStrReplaceTool(fileSystem),
+        file_manager: buildFileManagerTool(fileSystem),
+      },
+      onFinish: async ({ response }) => {
+        // Save to project if projectId is provided and user is authenticated
+        if (projectId) {
+          try {
+            // Check if user is authenticated
+            const session = await getSession();
+            if (!session) {
+              console.error("User not authenticated, cannot save project");
+              return;
+            }
+
+            // Get the messages from the response
+            const responseMessages = response.messages || [];
+            // Combine original messages with response messages
+            const allMessages = [...messages, ...responseMessages];
+
+            await prisma.project.update({
+              where: {
+                id: projectId,
+                userId: session.userId,
+              },
+              data: {
+                messages: JSON.stringify(allMessages),
+                data: JSON.stringify(fileSystem.serialize()),
+              },
+            });
+          } catch (error) {
+            console.error("Failed to save project data:", error);
+          }
+        }
+      },
+    });
+
+    return result.toDataStreamResponse();
   } catch (error) {
     console.error("Chat API error:", error);
     

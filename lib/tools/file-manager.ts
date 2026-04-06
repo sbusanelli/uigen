@@ -3,7 +3,7 @@ import { z } from "zod";
 import { VirtualFileSystem } from "../file-system";
 
 export function buildFileManagerTool(fileSystem: VirtualFileSystem) {
-  return tool({
+  return {
     description:
       'Rename or delete files or folders in the file system. Rename can be used to "move" a file. Rename will recursively create folders as required.',
     parameters: z.object({

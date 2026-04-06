@@ -13,8 +13,7 @@ const TextEditorParameters = z.object({
 
 export const buildStrReplaceTool = (fileSystem: VirtualFileSystem) => {
   return {
-    id: "str_replace_editor" as const,
-    args: {},
+    description: "Text editor tool for viewing, creating, and modifying files",
     parameters: TextEditorParameters,
     execute: async ({
       command,
