@@ -46,7 +46,7 @@
    Add your Anthropic API key:
    ```env
    ANTHROPIC_API_KEY=your_anthropic_api_key_here
-   JWT_SECRET=your-super-secret-jwt-key-for-development
+   JWT_SECRET=your_jwt_secret_at_least_32_characters_long
    ```
 
 4. **Generate Prisma client**
