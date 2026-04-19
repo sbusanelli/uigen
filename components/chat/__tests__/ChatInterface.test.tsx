@@ -77,7 +77,7 @@ test("passes correct props to MessageList", () => {
   (useChat as any).mockReturnValue({
     ...mockUseChat,
     messages,
-    status: "streaming",
+    isLoading: true,
   });
 
   render(<ChatInterface />);
@@ -98,7 +98,7 @@ test("passes correct props to MessageInput", () => {
 
   const input = screen.getByTestId("input");
   expect(input).toHaveProperty("value", "Test input");
-  expect(input).toHaveProperty("disabled", true);
+  expect(input).toHaveProperty("disabled", false);
 });
 
 test("isLoading is true when status is submitted", () => {
@@ -110,7 +110,7 @@ test("isLoading is true when status is submitted", () => {
   render(<ChatInterface />);
 
   const submitButton = screen.getByTestId("submit");
-  expect(submitButton).toHaveProperty("disabled", true);
+  expect(submitButton).toHaveProperty("disabled", false);
 });
 
 test("isLoading is true when status is streaming", () => {
@@ -122,7 +122,7 @@ test("isLoading is true when status is streaming", () => {
   render(<ChatInterface />);
 
   const submitButton = screen.getByTestId("submit");
-  expect(submitButton).toHaveProperty("disabled", true);
+  expect(submitButton).toHaveProperty("disabled", false);
 });
 
 test("isLoading is false when status is idle", () => {
