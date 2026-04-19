@@ -463,7 +463,16 @@ export function createPreviewHTML(
       } catch (error) {
         console.error('Failed to load app:', error);
         console.error('Import map:', ${JSON.stringify(importMap)});
-        document.getElementById('root').innerHTML = '<div class="error-boundary"><h2>Failed to load app</h2><pre>' + error.toString() + '</pre></div>';
+        document.getElementById('root').innerHTML = '<div class="error-boundary"><h2>Failed to load app</h2><pre>' + error.toString().replace(/[&<>"']/g, function(match) {
+            const escapeMap = {
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              "'": '&#x27;'
+            };
+            return escapeMap[match];
+          }) + '</pre></div>';
       }
     }
 
