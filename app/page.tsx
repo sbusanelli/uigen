@@ -93,7 +93,7 @@ export default function Home() {
                       <ol className="list-decimal list-inside space-y-1">
                         <li>Add ANTHROPIC_API_KEY to .env file</li>
                         <li>Type a component description in the chat</li>
-                        <li>Click "Generate Component"</li>
+                        <li>Click &quot;Generate Component&quot;</li>
                         <li>See live preview here!</li>
                       </ol>
                     </div>

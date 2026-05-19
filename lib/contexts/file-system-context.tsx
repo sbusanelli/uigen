@@ -49,35 +49,27 @@ export function FileSystemProvider({
     }
     return fs;
   });
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<string | null>(() => {
+    const files = fileSystem.getAllFiles();
+
+    if (files.has("/App.jsx")) {
+      return "/App.jsx";
+    }
+
+    const rootFiles = Array.from(files.keys())
+      .filter((path) => {
+        const parts = path.split("/").filter(Boolean);
+        return parts.length === 1;
+      })
+      .sort();
+
+    return rootFiles.length > 0 ? rootFiles[0] : null;
+  });
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const triggerRefresh = useCallback(() => {
     setRefreshTrigger((prev) => prev + 1);
   }, []);
-
-  useEffect(() => {
-    if (!selectedFile) {
-      const files = fileSystem.getAllFiles();
-
-      // Check if App.jsx exists
-      if (files.has("/App.jsx")) {
-        setSelectedFile("/App.jsx");
-      } else {
-        // Find first file in root directory
-        const rootFiles = Array.from(files.keys())
-          .filter((path) => {
-            const parts = path.split("/").filter(Boolean);
-            return parts.length === 1; // Root level file
-          })
-          .sort();
-
-        if (rootFiles.length > 0) {
-          setSelectedFile(rootFiles[0]);
-        }
-      }
-    }
-  }, [selectedFile, fileSystem, refreshTrigger]);
 
   const createFile = useCallback(
     (path: string, content: string = "") => {
