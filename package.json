@@ -13,8 +13,8 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.66",
-    "@babel/standalone": "^7.24.5",
+    "@ai-sdk/anthropic": "^3.0.80",
+    "@babel/standalone": "^7.29.7",
     "@monaco-editor/react": "^4.8.0-rc.3",
     "@prisma/client": "^5.19.1",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -33,7 +33,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
-    "dompurify": "^3.3.2",
+    "dompurify": "^3.4.7",
     "jose": "^5.2.3",
     "lucide-react": "^0.263.1",
     "next": "^15.5.15",
@@ -61,6 +61,6 @@
     "vitest": "^3.2.4"
   },
   "overrides": {
-    "dompurify": "^3.3.2"
+    "dompurify": "^3.4.7"
   }
 }
