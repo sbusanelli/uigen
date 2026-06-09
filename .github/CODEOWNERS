@@ -1,0 +1,10 @@
+# CODEOWNERS file for UIGen project
+
+# Global code owners - will be requested for review on all PRs
+* sbusanelli@gmail.com
+
+# Specific file patterns and their owners
+# Add more specific rules here if needed
+# Example:
+# *.md @documentation-team
+# src/components/* @frontend-team
