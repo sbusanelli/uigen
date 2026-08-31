@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.80",
+    "@babel/core": "8.0.1",
     "@babel/standalone": "^7.29.7",
     "@monaco-editor/react": "^4.8.0-rc.3",
     "@prisma/client": "^5.19.1",
