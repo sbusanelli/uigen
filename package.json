@@ -13,7 +13,7 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.80",
+    "@ai-sdk/anthropic": "^3.0.117",
     "@babel/standalone": "^7.29.7",
     "@monaco-editor/react": "^4.8.0-rc.3",
     "@prisma/client": "^5.19.1",
@@ -27,7 +27,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "ai": "^6.0.146",
+    "ai": "^6.0.280",
     "autoprefixer": "^10.0.1",
     "bcrypt": "^6.0.0",
     "class-variance-authority": "^0.7.0",
